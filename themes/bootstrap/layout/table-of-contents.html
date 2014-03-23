@@ -1,1 +1,10 @@
-../../../content/table-of-contents.html
+<ol class="list-unstyled">
+{% for node in nodes %}
+	<li><a href="{{ attribute(pages, node.page_index).url }}">{{ attribute(pages, node.page_index).title }}</a></li>
+	{% if node.nodes %}
+		<div class="children" style="margin-left: 20px">
+			{% include "layout/table-of-contents.html" with {'nodes': node.nodes} %}
+		</div>	
+	{% endif %}
+{% endfor %}
+</ol>
