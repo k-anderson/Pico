@@ -1,1 +1,164 @@
-../../content/bootstrap-index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Karl Anderson">
+{% if meta.description %}
+	<meta name="description" content="{{ meta.description }}">
+{% endif %}
+{% if meta.robots %}
+	<meta name="robots" content="{{ meta.robots }}">
+{% endif %}
+	
+    <link rel="shortcut icon" href="{{ theme_url }}/assets/ico/favicon.ico">
+	<link rel="icon" href="{{ theme_url }}/assets/ico/favicon.ico" type="image/x-icon" />
+	
+	<title>{% if not(is_front_page) %}{{ meta.title }} | {% endif %}{{ site_title }}</title>
+
+    <link href="{{ theme_url }}/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/blog.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="{{ theme_url }}/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="blog-masthead">
+		<div class="container">
+			<nav class="blog-nav">
+				<a class="blog-nav-item {{ is_front_page ? ' active' }}" href="{{ base_url }}">Home</a>
+			{% for node in hierarchy.tree.nodes %}
+				{% set page = attribute(pages, node.page_index) %}
+				<a class="blog-nav-item{{ node.page_index in hierarchy.ancestors or page.active ? ' active' }}" href="{{ page.url }}">{{ page.title }}</a>
+			{% endfor %}
+			</nav>
+		</div>
+    </div>
+		
+    <div class="container">
+		<div class="blog-header">
+			<h1 class="blog-title">The Bootstrap Blog</h1>
+			<p class="lead blog-description">The official example template of creating a blog with Bootstrap.</p>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-8 blog-main">
+			{% if is_front_page %}
+
+			{% else %}
+				<div class="blog-post">
+				{% if meta.title %}
+					<h2 class="blog-post-title">{{ meta.title }}</h2>
+				{% endif %}
+				{% spaceless %}
+					<div class="blog-post-content">{{ content }}</div>
+				{% endspaceless %}
+					<p class="blog-post-date">{{ meta.date_formatted }}</p>
+				</div>
+			{% endif %}
+			</div><!-- /.blog-main -->
+
+			<div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+				<div class="sidebar-module sidebar-module-inset">
+					<h4>About</h4>
+					<p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+				</div>
+				<div class="sidebar-module">
+					<p>
+						<a id="enable_epic_editor" href="#">Edit with EpicEditor</a>
+					</p>
+					<p>
+						<a id="enable_markitup_editor" href="#">Edit with Markitup</a>
+					</p>
+				</div>	
+				<div class="sidebar-module">
+					<h4>Table of Contents</h4>
+					{% include "layout/table-of-contents.html" with {'nodes': hierarchy.tree.nodes} %}
+				</div>
+				<div class="sidebar-module">
+					<h4>Elsewhere</h4>
+					<ol class="list-unstyled">
+						<li><a href="#">GitHub</a></li>
+						<li><a href="#">Twitter</a></li>
+						<li><a href="#">Facebook</a></li>
+					</ol>
+				</div>
+			</div><!-- /.blog-sidebar -->
+		
+		</div><!-- /.row -->
+	  
+    </div><!-- /.container -->
+
+	<div class="blog-footer">
+		<p>
+			<a href="#">Back to top</a>
+		</p>
+    </div>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ theme_url }}/assets/js/bootstrap.min.js"></script>
+	
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+		
+	<link href="{{ base_url }}/plugins/pico_editor/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+	<script type="text/javascript" src="{{ base_url }}/plugins/pico_editor/bootstrap3-editable/js/bootstrap-editable.js"></script>
+
+	<script type="text/javascript" src="{{ base_url }}/plugins/pico_editor/epic-editor/js/epiceditor.js"></script>
+	<script type="text/javascript" src="{{ base_url }}/plugins/pico_editor/inputs-ext/epiceditor/epiceditor.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{ base_url }}/plugins/pico_editor/epic-editor/themes/base/epiceditor.css" />
+
+	<script type="text/javascript" src="{{ base_url }}/plugins/pico_editor/markitup/jquery.markitup.js"></script>
+	<script type="text/javascript" src="{{ base_url }}/plugins/pico_editor/inputs-ext/markitup/markitup.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{ base_url }}/plugins/pico_editor/markitup/skins/markitup/style.css" />
+	<link rel="stylesheet" type="text/css" href="{{ base_url }}/plugins/pico_editor/markitup/sets/markdown/style.css" />
+	
+	<script type="text/javascript" >
+		$.fn.editable.defaults.mode = 'inline';
+
+		$( "#enable_epic_editor" )
+			.click(function( event ) {
+				$('.blog-post-title').editable({
+					type: 'text',
+					title: 'Title',
+					placeholder: 'Page Title'
+				});
+				$('.blog-post-content').editable({
+					type: 'epicedit',
+					title: 'Content',
+					placeholder: 'Amazing content...',
+					rawcontent: '{{ editor.content|e('js') }}',
+					basepath: '{{ base_url }}/plugins/pico_editor/epic-editor',
+					filename: '{{ editor.filename }}'
+				});			
+				event.preventDefault();
+		});
+	
+		$( "#enable_markitup_editor" )
+			.click(function( event ) {
+				$('.blog-post-title').editable({
+					type: 'text',
+					title: 'Title',
+					placeholder: 'Page Title'
+				});
+				$('.blog-post-content').editable({
+					type: 'markitup',
+					title: 'Content',
+					placeholder: 'Amazing content...',
+					rawcontent: '{{ editor.content|e('js') }}',
+					basepath: '{{ base_url }}/plugins/pico_editor/epic-editor',
+					filename: '{{ editor.filename }}'
+				});			
+				event.preventDefault();
+		});		
+	</script>
+	
+	</body>
+</html>
